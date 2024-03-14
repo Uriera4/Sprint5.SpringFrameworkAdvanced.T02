@@ -78,11 +78,11 @@ public class AuthenticationService {
                 .build();
     }
     public void revokeAllTokenByUser (User user){
-        List<String> tokens = tokenRepository.findAllTokenByUsername(user.getUsername());
+        List<String> tokens = user.getTokens();
         if (!tokens.isEmpty()){
             List<Token> tokenList = new ArrayList<>();
-            for (String username : tokens){
-                tokenList.add(tokenRepository.findByUsername(username).orElseThrow());
+            for (String token : tokens){
+                tokenList.add(tokenRepository.findByToken(token).get());
             }
             tokenList.forEach(t -> t.setLoggedOut(true));
             tokenRepository.saveAll(tokenList);

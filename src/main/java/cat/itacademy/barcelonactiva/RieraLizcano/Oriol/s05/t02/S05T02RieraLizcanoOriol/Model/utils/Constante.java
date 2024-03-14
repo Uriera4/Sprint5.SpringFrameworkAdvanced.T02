@@ -29,7 +29,6 @@ public class Constante {
 
     //Queries Repository
     public static final String querieDeleteByJugadorId = "DELETE FROM Juego j WHERE jugador.id_jugador = :id_jugador";
-    public static final String querieGetAllTokens = "{ 'user.username' : ?0, 'isLoggedOut' : false }";
 
     // JWTService
     public static final String secretKeyValue = "uisdh89hw89eh127he9jd1jd8j3f09r09irnvuans0jn2";

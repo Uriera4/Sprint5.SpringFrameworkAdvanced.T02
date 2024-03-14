@@ -16,8 +16,10 @@ public class JugadorConverter {
 
     public JugadorDTO convertToDTO (Jugador jugador){
         JugadorDTO jugadorDTO = null;
-        if (jugador!=null) jugadorDTO = createDTO(jugador);
-        if (jugadorDTO!=null) jugadorDTO.calculaPorcentajeVictorias();
+        if (jugador!=null) {
+            jugadorDTO = createDTO(jugador);
+            jugadorDTO.calculaPorcentajeVictorias();
+        }
         return jugadorDTO;
     }
     private JugadorDTO createDTO (Jugador jugador){

@@ -13,6 +13,7 @@ import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcan
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -84,10 +85,16 @@ public class JugadorService {
         }
     }
     public List<JuegoDTO> getTiradasJugador (Integer id){
+        List<JuegoDTO> listaTiradas;
         Optional<Jugador> optionJugador = jugadorRepository.findById(id);
         if (optionJugador.isPresent()){
             JugadorDTO jugadorDTO = converter.convertToDTO(optionJugador.get());
-            return jugadorDTO.getTiradas();
+            if (jugadorDTO != null) {
+                listaTiradas = jugadorDTO.getTiradas();
+            } else {
+                listaTiradas = new ArrayList<>();
+            }
+            return listaTiradas;
         } else {
             throw new JugadorNotFoundException(Constante.jugadorNotFound);
         }

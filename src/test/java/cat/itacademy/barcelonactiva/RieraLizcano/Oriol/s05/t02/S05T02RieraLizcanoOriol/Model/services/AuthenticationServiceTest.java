@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -21,6 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,8 +50,6 @@ public class AuthenticationServiceTest {
 
     @BeforeEach
     public void setUp(){
-        tokenRepository.deleteAll();
-        userRepository.deleteAll();
         this.user = User.builder().name("Oriol").username("oriol").password("oriol").tokens(new ArrayList<>()).build();
         this.jwtToken = Jwts.builder()
                 .subject(user.getUsername())
@@ -68,11 +68,13 @@ public class AuthenticationServiceTest {
     @Test
     public void AuthenticationService_authenticate (){
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(this.user.getUsername(), this.user.getPassword());
+        List<Token> tokenList = Mockito.mock(List.class);
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(usernamePasswordAuthenticationToken);
         when(userRepository.findByUsername(this.user.getUsername())).thenReturn(Optional.ofNullable(this.user));
 
         when(tokenService.generateToken(this.user)).thenReturn(this.jwtToken);
         when(tokenRepository.findByToken(this.jwtToken)).thenReturn(Optional.of(new Token()));
+        when(tokenRepository.saveAll(any(List.class))).thenReturn(tokenList);
         when(userRepository.save(any(User.class))).thenReturn(this.user);
         when(tokenRepository.save(any(Token.class))).thenReturn(new Token());
 

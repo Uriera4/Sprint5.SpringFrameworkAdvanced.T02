@@ -57,7 +57,7 @@ public class AuthenticationService {
                 .name(request.getName())
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role(Role.USER)
+                .role(Role.ADMIN)
                 .tokens(new ArrayList<>())
                 .build();
     }

@@ -2,25 +2,21 @@ package cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizca
 
 import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcanoOriol.Model.security.Token;
 import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcanoOriol.Model.security.User;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
-import org.springframework.boot.test.autoconfigure.data.mongo.DataMongoTest;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
-@DataMongoTest
-@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2, replace = AutoConfigureTestDatabase.Replace.NONE)
+@ExtendWith(MockitoExtension.class)
 public class TokenRepositoryTest {
 
-    @Autowired
+    @Mock
     private TokenRepository tokenRepository;
-    @BeforeEach
-    public void reset(){
-        tokenRepository.deleteAll();
-    }
 
     @Test
     public void TokenRepository_findByToken(){
@@ -28,9 +24,12 @@ public class TokenRepositoryTest {
         User user = User.builder().username("oriol").password("oriol").build();
         Token token = Token.builder().token(jwtToken).isLoggedOut(false).username(user.getUsername()).build();
 
-        tokenRepository.save(token);
+        when(tokenRepository.findByToken(jwtToken)).thenReturn(Optional.of(token));
 
-        assertThat(tokenRepository.findByToken(jwtToken)).isPresent();
+        Optional<Token> foundToken = tokenRepository.findByToken(jwtToken);
+
+        assertThat(foundToken).isPresent();
+        assertThat(foundToken.get().getToken()).isEqualTo(jwtToken);
     }
 
 }

@@ -35,7 +35,6 @@ public class TokenServiceTest {
 
     @BeforeEach
     public void setUp(){
-        tokenRepository.deleteAll();
         this.user = User.builder().username("oriol").password("oriol").build();
         this.token = Jwts.builder()
                 .subject(user.getUsername())

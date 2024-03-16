@@ -13,7 +13,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
@@ -23,6 +22,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -42,7 +42,6 @@ public class JugadorServiceTest {
 
     @BeforeEach
     public void setUp(){
-        jugadorRepository.deleteAll();
         this.user = User.builder().username("oriol").build();
         this.jugador = new Jugador();
         this.jugador.setNombre("Nombre");
@@ -93,6 +92,7 @@ public class JugadorServiceTest {
     public void JugadorService_deleteTiradas(){
         Integer id = 1;
         when(jugadorRepository.findById(id)).thenReturn(Optional.ofNullable(this.jugador));
+        doNothing().when(juegoService).deleteJuegos(id);
         when(jugadorRepository.save(any(Jugador.class))).thenReturn(this.jugador);
 
         assertAll(() -> jugadorService.deleteTiradasJugador(id));
@@ -113,9 +113,12 @@ public class JugadorServiceTest {
     }
     @Test
     public void JugadorService_getAllJugadores(){
-        List<Jugador> jugadores = Mockito.mock(List.class);
+        List<Jugador> jugadores = new ArrayList<>();
+        jugadores.add(this.jugador);
+        JugadorDTO jugadorDTO = JugadorDTO.builder().nombre(jugador.getNombre()).build();
 
         when(jugadorRepository.findAll()).thenReturn(jugadores);
+        when(jugadorConverter.convertToDTO(any(Jugador.class))).thenReturn(jugadorDTO);
 
         List<JugadorDTO> jugadoresDTO = jugadorService.getAllJugadores();
 
@@ -138,6 +141,8 @@ public class JugadorServiceTest {
     public void JugadorService_deleteJugador(){
         Integer id = 1;
         when(jugadorRepository.findById(id)).thenReturn(Optional.ofNullable(this.jugador));
+        doNothing().when(juegoService).deleteJuegos(id);
+        doNothing().when(jugadorRepository).deleteById(id);
 
         assertAll(() -> jugadorService.deleteJugador(id));
     }

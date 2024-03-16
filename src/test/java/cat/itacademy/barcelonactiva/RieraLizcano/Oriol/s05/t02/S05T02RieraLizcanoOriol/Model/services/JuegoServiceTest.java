@@ -15,6 +15,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +31,6 @@ public class JuegoServiceTest {
 
     @BeforeEach
     public void setUp(){
-        juegoRepository.deleteAll();
         this.jugador = new Jugador();
         this.jugador.setNombre("Nombre");
         this.jugador.setTiradas(new ArrayList<>());
@@ -51,6 +51,7 @@ public class JuegoServiceTest {
     @Test
     public void JuegoService_deleteJuegos(){
         Integer id = 1;
+        doNothing().when(juegoRepository).deleteByJugadorId(id);
         assertAll(() -> juegoRepository.deleteByJugadorId(id));
 
     }

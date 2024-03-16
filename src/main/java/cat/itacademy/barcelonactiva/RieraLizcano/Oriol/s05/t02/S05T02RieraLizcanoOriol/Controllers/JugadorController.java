@@ -4,7 +4,6 @@ import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcan
 import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcanoOriol.Model.domain.Jugador;
 import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcanoOriol.Model.dto.JugadorDTO;
 import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcanoOriol.Model.dto.TotalWinRate;
-import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcanoOriol.Model.repositories.UserRepository;
 import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcanoOriol.Model.security.User;
 import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcanoOriol.Model.services.JugadorService;
 import cat.itacademy.barcelonactiva.RieraLizcano.Oriol.s05.t02.S05T02RieraLizcanoOriol.Model.utils.Constante;
@@ -24,7 +23,7 @@ public class JugadorController {
     @Autowired
     JugadorService jugadorService;
     @Autowired
-    UserRepository userRepository;
+    TotalWinRate totalWinRate;
 
     @GetMapping(Constante.crearJugador)
     public String showRegisterFormulary (@ModelAttribute(Constante.usuario) User user, Model model){
@@ -61,7 +60,7 @@ public class JugadorController {
     @Operation(summary = "Mostrar jugador", description = "Sirve para mostrar un jugador del usuario activo")
     @GetMapping(Constante.playerPage)
     public String getJugador (Principal p, @PathVariable(Constante.id) Integer id, Model model){
-        if (id>jugadorService.getAllJugadores().size() || id==0 || !jugadorService.findJugador(id).getUsername().equalsIgnoreCase(p.getName())) {
+        if (id>jugadorService.getAllJugadores().getLast().getId() || id==0 || !jugadorService.findJugador(id).getUsername().equalsIgnoreCase(p.getName())) {
             throw new JugadorNotFoundException(Constante.jugadorNotFound);
         }
         model.addAttribute(Constante.id,id);
@@ -85,7 +84,7 @@ public class JugadorController {
     @GetMapping(Constante.listaJugadores)
     public String getJugadores (Principal p, Model model){
         List<JugadorDTO> jugadores = jugadorService.getAllJugadores().stream().filter(jugador -> jugador.getUsername().equals(p.getName())).toList();
-        model.addAttribute(Constante.winrate, TotalWinRate.calculaTotalWinRate(jugadores));
+        model.addAttribute(Constante.winrate, totalWinRate.calculaTotalWinRate(jugadores));
         model.addAttribute(Constante.jugadores, jugadores);
         return Constante.showJugadores;
     }
@@ -93,7 +92,7 @@ public class JugadorController {
     @GetMapping(Constante.ranking)
     public String getRanking (Principal p, Model model){
         List<JugadorDTO> jugadores = jugadorService.getRankingJugadores().stream().filter(jugador -> jugador.getUsername().equals(p.getName())).toList();
-        model.addAttribute(Constante.winrate, TotalWinRate.calculaTotalWinRate(jugadores));
+        model.addAttribute(Constante.winrate, totalWinRate.calculaTotalWinRate(jugadores));
         model.addAttribute(Constante.jugadores, jugadores);
         return Constante.showRanking;
     }
@@ -101,7 +100,7 @@ public class JugadorController {
     @GetMapping(Constante.rankingGlobal)
     public String getRankingGlobal (Principal p, Model model){
         List<JugadorDTO> jugadores = jugadorService.getRankingJugadores();
-        model.addAttribute(Constante.winrate, TotalWinRate.calculaTotalWinRate(jugadores));
+        model.addAttribute(Constante.winrate, totalWinRate.calculaTotalWinRate(jugadores));
         model.addAttribute(Constante.jugadores, jugadores);
         return Constante.showRanking;
     }
